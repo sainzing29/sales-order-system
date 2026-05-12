@@ -1,0 +1,35 @@
+.app-shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.app-shell-brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e8590c;
+}
+
+.app-shell-main {
+  background-color: #f8f9fa;
+  min-height: 0;
+}
+
+.nav-pills .nav-link {
+  color: #495057;
+  font-weight: 500;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #fd7e14;
+  color: #fff;
+}
+
+.nav-pills .nav-link:not(.active):hover {
+  background-color: #fff5eb;
+  color: #d9480f;
+}
+
+.app-shell-logout {
+  flex-shrink: 0;
+}

@@ -1,0 +1,314 @@
+<div class="container mt-4">
+
+  <div class="card p-4 so-card">
+
+    <h3 class="mb-4">Sales Order</h3>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()">
+
+      <div class="row g-3 mb-3">
+
+        <div class="col-lg-6">
+
+          <div class="mb-3">
+
+            <label class="so-label so-label--vendor">Vendor Code</label>
+
+            <input
+              type="text"
+              class="form-control"
+              readonly
+              tabindex="-1"
+              [value]="selectedVendor?.vendorCode ?? ''">
+          </div>
+
+          <div
+            #vendorPicker
+            class="so-vendor-picker">
+
+            <label class="so-label so-label--vendor">Vendor Name</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="vendorSearch"
+              placeholder="Search vendor name or code…"
+              autocomplete="off"
+              aria-autocomplete="list"
+              [attr.aria-expanded]="vendorListOpen"
+              (focus)="onVendorSearchFocus()"
+              (input)="onVendorSearchInput()">
+
+            <ul
+              *ngIf="vendorListOpen && filteredVendors.length"
+              class="so-vendor-list list-unstyled mb-0"
+              role="listbox">
+
+              <li
+                *ngFor="let v of filteredVendors"
+                role="option"
+                class="so-vendor-option"
+                (mousedown)="$event.preventDefault()"
+                (click)="pickVendor(v)">
+
+                <span class="so-vendor-option-code">{{ v.vendorCode }}</span>
+
+                <span class="so-vendor-option-name">{{ v.vendorName }}</span>
+              </li>
+
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+          <div class="mb-3">
+
+            <label class="so-label so-label--doc">Doc Date</label>
+
+            <input
+              type="date"
+              class="form-control"
+              formControlName="docDate">
+          </div>
+
+          <div>
+
+            <label class="so-label so-label--doc">Doc No</label>
+
+            <input
+              type="text"
+              class="form-control"
+              readonly
+              formControlName="docNo"
+              placeholder="">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div
+        class="so-table-wrap"
+        (scroll)="onItemTableScroll()">
+
+        <table class="table table-bordered so-table mb-0">
+
+          <thead>
+
+            <tr>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor">
+
+                Item Code
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor">
+
+                Item Name
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor">
+
+                UOM
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--qty">
+
+                Quantity
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor">
+
+                Price
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--qty">
+
+                Total
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor so-th--narrow">
+
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody formArrayName="items">
+
+            <tr
+              *ngFor="let row of items.controls; let i = index"
+              [formGroupName]="i"
+              class="so-item-line-picker">
+
+              <td>
+
+                <div class="so-item-typeahead">
+
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [id]="'so-item-field-' + i + '-code'"
+                    formControlName="itemCode"
+                    placeholder="Type to search…"
+                    autocomplete="off"
+                    (focus)="onItemCodeFocus(i)"
+                    (input)="onItemCodeInput(i)">
+                </div>
+              </td>
+
+              <td>
+
+                <div class="so-item-typeahead">
+
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [id]="'so-item-field-' + i + '-name'"
+                    formControlName="itemName"
+                    placeholder="Type to search…"
+                    autocomplete="off"
+                    (focus)="onItemNameFocus(i)"
+                    (input)="onItemNameInput(i)">
+                </div>
+              </td>
+
+              <td>
+
+                <input
+                  type="text"
+                  class="form-control form-control-sm so-cell-readonly"
+                  readonly
+                  formControlName="uom">
+              </td>
+
+              <td class="so-cell-qty">
+
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  class="form-control form-control-sm so-qty-input"
+                  formControlName="quantity">
+              </td>
+
+              <td>
+
+                <input
+                  type="number"
+                  readonly
+                  class="form-control form-control-sm so-cell-readonly text-end"
+                  formControlName="price"
+                  step="0.01">
+              </td>
+
+              <td class="text-end so-cell-readonly so-line-total">
+
+                {{ lineTotal(i) | number:'1.2-2' }}
+              </td>
+
+              <td class="so-col-remove">
+
+                <div class="so-col-remove-inner">
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm w-100"
+                    (click)="removeItemRow(i)">
+
+                    Remove
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <ul
+        *ngIf="itemPickState?.results?.length"
+        class="so-item-list so-item-list-portal list-unstyled mb-0"
+        [ngStyle]="itemDropdownStyle"
+        role="listbox">
+
+        <li
+          *ngFor="let hit of itemPickState!.results"
+          role="option"
+          class="so-item-option"
+          (mousedown)="$event.preventDefault()"
+          (click)="pickItemFromPortal(hit)">
+
+          <span class="so-item-option-code">{{ hit.code }}</span>
+
+          <span class="so-item-option-name">{{ hit.name }}</span>
+
+          <span class="so-item-option-meta">{{ hit.uom }} · {{ hit.price | number:'1.2-2' }}</span>
+        </li>
+
+      </ul>
+
+      <div class="so-subtotal text-end mt-2">
+
+        Subtotal:&nbsp;
+
+        <strong>{{ orderSubtotal | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="addItemRow()">
+
+          Add Row
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-add-update d-inline-flex align-items-center justify-content-center gap-2"
+          [disabled]="saving || !canSave">
+
+          @if (saving) {
+
+            <span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"></span>
+
+            <span>Please wait…</span>
+          } @else {
+
+            <span>Add / Update</span>
+          }
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

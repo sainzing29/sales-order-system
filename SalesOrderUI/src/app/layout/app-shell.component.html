@@ -1,0 +1,59 @@
+<div class="app-shell d-flex flex-column min-vh-100">
+
+  <header class="app-shell-header border-bottom bg-white shadow-sm">
+
+    <div class="container-fluid py-2 px-3">
+
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 w-100">
+
+        <nav
+          class="nav nav-pills flex-wrap gap-1"
+          aria-label="Main">
+
+          <a
+            class="nav-link"
+            routerLink="/sales-order/list"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+
+            Sales orders
+          </a>
+
+          <a
+            class="nav-link"
+            routerLink="/sales-order"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+
+            New order
+          </a>
+
+          @if (showUsersNav) {
+
+            <a
+              class="nav-link"
+              routerLink="/users"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }">
+
+              Users
+            </a>
+          }
+        </nav>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm app-shell-logout"
+          (click)="logout()">
+
+          Log out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell-main flex-grow-1">
+
+    <router-outlet />
+  </main>
+</div>

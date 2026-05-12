@@ -1,0 +1,16 @@
+@use '../sales-order/sales-order.component.scss' as *;
+
+.sol-doc-link {
+  font-weight: 600;
+  color: #e8590c;
+  text-decoration: none;
+}
+
+.sol-doc-link:hover {
+  text-decoration: underline;
+  color: #d9480f;
+}
+
+.sol-mono {
+  font-variant-numeric: tabular-nums;
+}

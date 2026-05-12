@@ -1,0 +1,145 @@
+<div class="container mt-4">
+
+  <div class="card p-4 so-card">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+
+      <h3 class="mb-0">Sales orders</h3>
+
+      <a
+        class="btn btn-add-update"
+        routerLink="/sales-order">
+
+        Add New
+      </a>
+    </div>
+
+    @if (loadError) {
+
+      <div
+        class="alert alert-danger mb-0"
+        role="alert">
+
+        {{ loadError }}
+      </div>
+    }
+
+    @if (loading) {
+
+      <div class="d-flex align-items-center gap-2 text-muted py-3">
+
+        <span
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"></span>
+
+        <span>Loading…</span>
+      </div>
+    } @else if (!orders.length && !loadError) {
+
+      <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2 mb-0">
+
+        <span>No sales orders yet.</span>
+
+        <a
+          class="btn btn-sm btn-add-update"
+          routerLink="/sales-order">
+
+          Add New
+        </a>
+      </div>
+    } @else if (orders.length) {
+
+      <div class="so-table-wrap">
+
+        <table class="table table-bordered so-table mb-0">
+
+          <thead>
+
+            <tr>
+
+              <th
+                scope="col"
+                class="so-th so-th--qty">
+
+                Date
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--qty">
+
+                Doc no
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor">
+
+                Vendor name
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--qty text-end">
+
+                Total amount
+              </th>
+
+              <th
+                scope="col"
+                class="so-th so-th--vendor so-th--narrow">
+
+              </th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let row of orders">
+
+              <td>{{ displayDate(row.docDate) }}</td>
+
+              <td>
+
+                <a
+                  class="sol-doc-link"
+                  [routerLink]="['/sales-order', row.id]">
+
+                  {{ row.docNo }}
+                </a>
+              </td>
+
+              <td>{{ row.vendorName ?? '—' }}</td>
+
+              <td class="text-end sol-mono so-cell-readonly">
+
+                {{ row.totalAmount != null ? (row.totalAmount | number:'1.2-2') : '—' }}
+              </td>
+
+              <td class="so-col-remove">
+
+                <div class="so-col-remove-inner">
+
+                  <a
+                    class="btn btn-sm btn-outline-primary w-100"
+                    [routerLink]="['/sales-order', row.id]">
+
+                    Update
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+    }
+
+  </div>
+
+</div>
